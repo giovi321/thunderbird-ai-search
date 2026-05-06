@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "AI Email Search",
   "description": "Semantic search over your email using local AI",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Giovanni Crapelli",
   "browser_specific_settings": {
     "gecko": {
@@ -13,7 +13,8 @@
   "permissions": [
     "messagesRead",
     "storage",
-    "tabs"
+    "tabs",
+    "<all_urls>"
   ],
   "browser_action": {
     "default_title": "AI Email Search",
