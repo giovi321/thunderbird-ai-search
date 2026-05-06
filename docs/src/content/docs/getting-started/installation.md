@@ -37,9 +37,9 @@ cp config.example.yaml config.yaml
 
 Edit `config.yaml` with your IMAP account details. At minimum:
 
-- `accounts[0].host` — your IMAP server (e.g. `imap.gmail.com`)
-- `accounts[0].username` — your email address
-- `accounts[0].password` — your password or [app password](https://support.google.com/accounts/answer/185833)
+- `accounts[0].host`: your IMAP server (e.g. `imap.gmail.com`)
+- `accounts[0].username`: your email address
+- `accounts[0].password`: your password or [app password](https://support.google.com/accounts/answer/185833)
 
 For Gmail you must use an [App Password](https://support.google.com/accounts/answer/185833), not your regular password.
 
@@ -55,8 +55,8 @@ docker compose up -d
 
 This starts two containers:
 
-- **qdrant** — vector database on port 6333
-- **server** — indexer + search API on port 8342
+- **qdrant**: vector database on port 6333
+- **server**: indexer + search API on port 8342
 
 Check the logs to monitor indexing progress:
 

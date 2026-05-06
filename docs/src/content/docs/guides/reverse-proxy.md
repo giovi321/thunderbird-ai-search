@@ -3,7 +3,7 @@ title: Reverse proxy setup
 description: Put the search API behind Apache or Nginx with HTTPS and CORS.
 ---
 
-If you want to expose the server over HTTPS with a clean hostname (e.g. for VPN access from off-LAN clients), put it behind a reverse proxy. The two things that need attention are **CORS preflight** and **header duplication** — get those wrong and the addon will fail with `NetworkError` even though the server itself is healthy.
+If you want to expose the server over HTTPS with a clean hostname (e.g. for VPN access from off-LAN clients), put it behind a reverse proxy. The two things that need attention are **CORS preflight** and **header duplication**. Get those wrong and the addon will fail with `NetworkError` even though the server itself is healthy.
 
 ## Why CORS matters here
 
@@ -12,7 +12,7 @@ The Thunderbird addon makes requests from a `moz-extension://…` origin to your
 1. Sends an `OPTIONS` preflight first.
 2. Only sends the real request if the preflight response has the right `Access-Control-Allow-*` headers.
 
-The FastAPI server already sets these headers via its `CORSMiddleware`. Your proxy must either pass them through cleanly, or strip them and set its own — but **not both** at the same time, or the browser sees duplicates and rejects the response.
+The FastAPI server already sets these headers via its `CORSMiddleware`. Your proxy must either pass them through cleanly, or strip them and set its own, but **not both** at the same time, or the browser sees duplicates and rejects the response.
 
 ## Apache 2.4
 
@@ -56,7 +56,7 @@ Replace `mail-search.example.com` with your hostname and `192.168.x.x` with your
     # --- CORS ---
     # Strip upstream CORS headers from the main response table so they don't
     # duplicate with the ones we set below. NOTE: 'Header unset' without
-    # 'always' is required — 'Header always unset' touches a different table
+    # 'always' is required. 'Header always unset' touches a different table
     # and won't remove headers added by the proxied backend.
     Header unset Access-Control-Allow-Origin
     Header unset Access-Control-Allow-Credentials
@@ -70,7 +70,7 @@ Replace `mail-search.example.com` with your hostname and `192.168.x.x` with your
     Header always set Access-Control-Allow-Headers "Content-Type, X-API-Key"
     Header always set Access-Control-Max-Age       "600"
 
-    # Short-circuit OPTIONS preflight with 204 — never proxied to FastAPI.
+    # Short-circuit OPTIONS preflight with 204. Never proxied to FastAPI.
     RewriteEngine On
     RewriteCond %{REQUEST_METHOD} =OPTIONS
     RewriteRule ^ - [R=204,L]
@@ -113,7 +113,7 @@ curl -i https://mail-search.example.com/health \
 # Expect: 1
 ```
 
-If the count is `2`, your `Header unset` lines aren't taking effect — check for stray `always` keywords on them, or that the directives are inside the `<VirtualHost *:443>` block.
+If the count is `2`, your `Header unset` lines aren't taking effect. Check for stray `always` keywords on them, or that the directives are inside the `<VirtualHost *:443>` block.
 
 If you're using a private/self-signed certificate, see the [custom certificate guide](/thunderbird-ai-search/guides/custom-certificate/) before pointing the addon at this URL.
 
@@ -165,6 +165,6 @@ In Thunderbird → **Add-ons Manager → AI Email Search → Options**, set the 
 
 ## Common pitfalls
 
-- **`NetworkError` only on `POST /search` (not `GET /health`)** — usually means duplicate `Access-Control-Allow-Origin` headers. Check with the curl `grep -ic` shown above.
-- **`Status code: (null)` in the browser console** — the preflight didn't get an HTTP response at all. Either TLS handshake failed (wrong / untrusted certificate — see the [custom certificate guide](/thunderbird-ai-search/guides/custom-certificate/)), or the rewrite for OPTIONS isn't matching.
-- **Empty Apache error log** — TLS rejection by the *client* doesn't write to the vhost error log. Verify the cert chain with `curl --cacert <ca.crt> https://your-host/health` from the client machine.
+- **`NetworkError` only on `POST /search` (not `GET /health`)**: usually means duplicate `Access-Control-Allow-Origin` headers. Check with the curl `grep -ic` shown above.
+- **`Status code: (null)` in the browser console**: the preflight didn't get an HTTP response at all. Either TLS handshake failed (wrong or untrusted certificate, see the [custom certificate guide](/thunderbird-ai-search/guides/custom-certificate/)), or the rewrite for OPTIONS isn't matching.
+- **Empty Apache error log**: TLS rejection by the *client* doesn't write to the vhost error log. Verify the cert chain with `curl --cacert <ca.crt> https://your-host/health` from the client machine.

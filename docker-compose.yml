@@ -17,7 +17,7 @@ services:
       # Persist indexer state so it doesn't re-fetch all emails on restart
       - server_state:/root/.config/thunderbird-ai-search
     environment:
-      # Internal Docker networking — do not change these
+      # Internal Docker networking. Do not change these
       - TAIS_QDRANT_URL=http://qdrant:6333
       - TAIS_OLLAMA_BASE_URL=http://host.docker.internal:11434
       - TAIS_API_HOST=0.0.0.0

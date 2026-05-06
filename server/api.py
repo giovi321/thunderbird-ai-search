@@ -153,7 +153,7 @@ def create_app(lifespan=None) -> FastAPI:
         """Pause cycles for this account for N hours (default 6).
 
         The scheduled cycle loop will skip this account until the pause expires.
-        A manual /reindex/{name} bypasses the pause — useful as an "I know what
+        A manual /reindex/{name} bypasses the pause. Useful as an "I know what
         I'm doing, run anyway" override.
         """
         indexer = app.state.indexer

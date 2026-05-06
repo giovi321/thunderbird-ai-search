@@ -134,7 +134,7 @@ class IndexerStatus:
     cmds_this_cycle: int = 0         # IMAP commands sent in the current cycle
     bytes_this_cycle: int = 0        # bytes downloaded from IMAP this cycle (for daily bandwidth tracking)
     last_abort_detail: dict = field(default_factory=dict)
-    # Adaptive-backoff state owned by the scheduler — surfaced here so the dashboard
+    # Adaptive-backoff state owned by the scheduler. Surfaced here so the dashboard
     # can show "next run in 2h (backoff 8x active after 3 rate-limited cycles)".
     backoff_multiplier: float = 1.0
     consecutive_rate_limit_aborts: int = 0
@@ -343,7 +343,7 @@ class EmailIndexer:
 
     # Per-session caps on Gmail (≈7500 commands, ≈2.5 GB downloaded, idle drops, TLS
     # hiccups) surface as imaplib.IMAP4.abort. The session itself is dead, but the
-    # account isn't actually rate-limited — a fresh LOGIN works immediately. So we
+    # account isn't actually rate-limited. A fresh LOGIN works immediately. So we
     # close the dead conn and reconnect with exponential backoff + jitter, mirroring
     # openArchiver's withRetry pattern. The 24-hour account-wide quota is a separate
     # concern handled by the scheduler-level adaptive backoff in main.py, which now
@@ -362,16 +362,16 @@ class EmailIndexer:
                 conn.logout()
         except Exception:
             pass
-        delay = (2 ** attempt) + random.random()  # 2s, 4s, 8s, 16s, 32s + 0–1s jitter
+        delay = (2 ** attempt) + random.random()  # 2s, 4s, 8s, 16s, 32s + 0 to 1s jitter
         logger.info(
-            "IMAP session for '%s' lost (attempt %d/%d) — reconnecting in %.1fs",
+            "IMAP session for '%s' lost (attempt %d/%d). Reconnecting in %.1fs",
             account.name, attempt, self.IMAP_RETRY_MAX_ATTEMPTS, delay,
         )
         time.sleep(delay)
         return self._connect(account)
 
     # On Gmail, every regular email lives in [Gmail]/All Mail. INBOX, Sent Mail,
-    # and user labels are all just views into All Mail — fetching from them duplicates.
+    # and user labels are all just views into All Mail. Fetching from them duplicates.
     # Drafts, Trash, Spam are *separate* from All Mail, so we index them independently.
     # Result: each email is fetched exactly once, no label-overlap inflation.
     _GMAIL_INDEX_FOLDERS = {
@@ -408,7 +408,7 @@ class EmailIndexer:
             keep = [n for n in all_names if n in self._GMAIL_INDEX_FOLDERS]
             if "[Gmail]/All Mail" not in keep:
                 # Gmail has a per-account toggle that hides All Mail from IMAP. Without
-                # it, we can't get full coverage with no duplicates — fall back to
+                # it, we can't get full coverage with no duplicates. Fall back to
                 # INBOX + Drafts/Trash/Spam, which loses archived-only emails. Warn loudly.
                 logger.warning(
                     "Gmail account '%s': [Gmail]/All Mail is not visible via IMAP. "
@@ -476,14 +476,14 @@ class EmailIndexer:
 
         Returns (emails, fetch_aborted, conn). Emails are in ascending UID order
         and each carries a "uid" key. fetch_aborted is True only if every retry
-        attempt (including fresh-LOGIN reconnects) failed — i.e. genuine 24h
+        attempt (including fresh-LOGIN reconnects) failed, i.e. genuine 24h
         quota or persistent server-side block. A single IMAP4.abort transparently
         triggers a reconnect+retry, since Gmail just kills the *session*, not the
         account. The conn returned may be a fresh one if a reconnect occurred;
         the caller must rebind its local conn variable.
 
         prior_fetched_total is the cumulative emails fetched in this account run
-        before this folder started — used so the running "Total fetched so far"
+        before this folder started. Used so the running "Total fetched so far"
         in the status snapshot updates per batch, not just per folder.
         """
         max_attempts = self.IMAP_RETRY_MAX_ATTEMPTS
@@ -553,7 +553,7 @@ class EmailIndexer:
                     folder, attempt, max_attempts, e,
                 )
                 conn = self._reconnect_after_abort(conn, account, attempt)
-                # SELECT state is lost across reconnect — restore it. If the
+                # SELECT state is lost across reconnect. Restore it. If the
                 # re-SELECT fails we cannot continue: any subsequent SEARCH/FETCH
                 # would hit "illegal in state AUTH" and spin in the retry loop.
                 try:
@@ -561,7 +561,7 @@ class EmailIndexer:
                     conn.select(f'"{folder}"', readonly=True)
                 except Exception as sel_err:
                     logger.error(
-                        "  Folder '%s': re-SELECT after reconnect failed during SEARCH: %s — aborting folder",
+                        "  Folder '%s': re-SELECT after reconnect failed during SEARCH: %s. Aborting folder",
                         folder, sel_err,
                     )
                     self.status.set_abort_detail({
@@ -631,7 +631,7 @@ class EmailIndexer:
                         batch_aborted = True
                         break
                     logger.warning(
-                        "  Folder '%s': IMAP abort at batch %d (attempt %d/%d): %s — reconnecting",
+                        "  Folder '%s': IMAP abort at batch %d (attempt %d/%d): %s. Reconnecting",
                         folder, batch_start, attempt, max_attempts, e,
                     )
                     conn = self._reconnect_after_abort(conn, account, attempt)
@@ -643,7 +643,7 @@ class EmailIndexer:
                         # "illegal in state AUTH" and the outer batch loop would
                         # spin every imap_batch_delay seconds. Abort the folder.
                         logger.error(
-                            "  Folder '%s': re-SELECT after reconnect failed at batch %d: %s — aborting folder",
+                            "  Folder '%s': re-SELECT after reconnect failed at batch %d: %s. Aborting folder",
                             folder, batch_start, sel_err,
                         )
                         self.status.set_abort_detail({
@@ -678,7 +678,7 @@ class EmailIndexer:
             if batch_bytes:
                 self.status.add_bytes(batch_bytes)
 
-            # Parse the batch response — msg_data contains pairs of (envelope, body)
+            # Parse the batch response. msg_data contains pairs of (envelope, body)
             # interspersed with b')' closing markers. The envelope contains "UID N".
             for item in msg_data:
                 if not isinstance(item, tuple) or len(item) < 2:
@@ -693,7 +693,7 @@ class EmailIndexer:
                     if uid_match:
                         uid_value = int(uid_match.group(1))
                 if uid_value is None:
-                    continue  # cannot checkpoint without UID — skip
+                    continue  # cannot checkpoint without UID; skip
                 try:
                     msg = email.message_from_bytes(raw)
                     message_id = msg.get("Message-ID", "").strip()
@@ -812,7 +812,7 @@ class EmailIndexer:
         acct_state["last_run_outcome"] = outcome
         acct_state["last_run_error"] = error
 
-        # Lifetime cumulative stats — survive history-window pruning so the user
+        # Lifetime cumulative stats. Survive history-window pruning so the user
         # always sees the big picture even if individual cycle entries roll off.
         # On first creation, look for the earliest available timestamp (cycle history,
         # last_run timestamps) to give upgraded users a reasonable "since" rather
@@ -856,7 +856,7 @@ class EmailIndexer:
         """Best-effort earliest timestamp for an account, used for lifetime.since.
 
         Walks history (oldest entry first) and falls back to last_run_started_at
-        and last_run_at. Returns `fallback` if nothing's available — typically
+        and last_run_at. Returns `fallback` if nothing's available, typically
         the case for a fresh state file where this cycle is genuinely the first.
         """
         history = acct_state.get("history", []) or []
@@ -968,7 +968,7 @@ class EmailIndexer:
             # (e.g. INBOX + user labels left over after switching to Gmail's
             # All-Mail-only mode). They were never being iterated but the dashboard
             # still rendered their stale checkpoint as "in progress". Qdrant data
-            # is untouched — emails stay searchable, just with their original
+            # is untouched. Emails stay searchable, just with their original
             # folder name in the payload.
             current_set = set(folders)
             stale = [name for name in folder_state if name not in current_set]
@@ -1010,7 +1010,7 @@ class EmailIndexer:
                     folder, uv_pre, un_pre, msgs_pre,
                 )
 
-            # cycle_total is "remaining unique emails to handle this cycle" — works as a
+            # cycle_total is "remaining unique emails to handle this cycle". Works as a
             # denominator for the embedded-count progress bar. Drops to 0 once caught up.
             already_indexed = self.store.count(account=account.name)
             cycle_total = max(0, total_messages - already_indexed)
@@ -1209,8 +1209,8 @@ class EmailIndexer:
                 max_fetches = self.config.indexer.imap_max_fetches_per_cycle
                 if max_fetches > 0 and fetched_total >= max_fetches:
                     logger.info(
-                        "Account '%s': fetch cap reached (%d emails this cycle) — "
-                        "ending gracefully, will resume next cycle",
+                        "Account '%s': fetch cap reached (%d emails this cycle). "
+                        "Ending gracefully, will resume next cycle",
                         account.name, fetched_total,
                     )
                     aborted = True  # skip cleanup to preserve quota for the next cycle's fetch
@@ -1270,7 +1270,7 @@ class EmailIndexer:
                     )
                     return 0
             except Exception:
-                pass  # malformed timestamp — fall through and run cleanup
+                pass  # malformed timestamp; fall through and run cleanup
 
         logger.info("Cleanup pass for account '%s'", account.name)
         try:
@@ -1281,7 +1281,7 @@ class EmailIndexer:
 
         try:
             # Mark the attempt timestamp now (not on success) so the throttle
-            # applies even when cleanup aborts mid-scan — we don't want to
+            # applies even when cleanup aborts mid-scan; we don't want to
             # re-burn rate-limit budget every cycle if cleanup keeps failing.
             acct_state["last_cleanup_at"] = datetime.now(timezone.utc).isoformat()
             self._save_state()
@@ -1476,12 +1476,12 @@ class EmailIndexer:
 
         for account in accounts:
             # Honor manual pause. A manually-triggered reindex (account_name set)
-            # bypasses the pause — clicking Reindex on a paused account should
+            # bypasses the pause; clicking Reindex on a paused account should
             # work as an explicit user override.
             paused, paused_until = self.is_account_paused(account.name)
             if paused and not account_name:
                 logger.info(
-                    "Account '%s' is paused until %s — skipping this cycle",
+                    "Account '%s' is paused until %s. Skipping this cycle",
                     account.name, paused_until,
                 )
                 continue
@@ -1503,7 +1503,7 @@ class EmailIndexer:
                     logger.error("Cleanup failed for account '%s': %s", account.name, e)
             elif was_aborted:
                 logger.info(
-                    "Skipping cleanup for account '%s' — fetch was rate-limited, "
+                    "Skipping cleanup for account '%s'. Fetch was rate-limited, "
                     "saving remaining quota for next indexing cycle",
                     account.name,
                 )

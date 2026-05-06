@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AI Email Search — Settings</title>
+  <title>AI Email Search: Settings</title>
   <style>
     :root {
       --accent: #086A78;
@@ -343,7 +343,7 @@
     .substep-label { font-weight: 500; }
     .substep-value { color: var(--text); }
 
-    /* Lifetime stats line — separator from the rest of the per-account details */
+    /* Lifetime stats line: separator from the rest of the per-account details */
     .account-lifetime {
       color: var(--text-muted);
       font-size: 11px;
@@ -564,11 +564,11 @@
     <div class="status-grid">
       <div class="status-card">
         <div class="status-card-label">Total Emails</div>
-        <div class="status-card-value" id="total-emails">—</div>
+        <div class="status-card-value" id="total-emails">...</div>
       </div>
       <div class="status-card">
         <div class="status-card-label">Accounts</div>
-        <div class="status-card-value" id="total-accounts">—</div>
+        <div class="status-card-value" id="total-accounts">...</div>
       </div>
     </div>
 
@@ -588,7 +588,7 @@
           <ul>
             <li>Fetches new emails since the last cycle and adds them to the index.</li>
             <li>Runs the cleanup pass that removes stale entries for emails no longer present on the server.</li>
-            <li>Counts against your IMAP provider's rate limits — large mailboxes (Gmail in particular) can be throttled and produce a partial cycle.</li>
+            <li>Counts against your IMAP provider's rate limits. Large mailboxes (Gmail in particular) can be throttled and produce a partial cycle.</li>
             <li>Bypasses any active per-account pause.</li>
             <li>Cannot start while another cycle is in progress (the server returns 409).</li>
           </ul>

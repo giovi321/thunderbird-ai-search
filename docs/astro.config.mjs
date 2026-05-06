@@ -7,7 +7,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Thunderbird AI Search',
-      description: 'Semantic email search for Thunderbird — local, private, no cloud.',
+      description: 'Semantic email search for Thunderbird. Local, private, no cloud.',
       logo: {
         src: './src/assets/logo.svg',
         replacesTitle: false,

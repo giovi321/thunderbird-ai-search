@@ -22,11 +22,11 @@ accounts:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `name` | — | Label for the account (shown in search results and addon) |
-| `host` | — | IMAP server hostname |
+| `name` | required | Label for the account (shown in search results and addon) |
+| `host` | required | IMAP server hostname |
 | `port` | `993` | IMAP port |
-| `username` | — | Email address / login |
-| `password` | — | Password or app password |
+| `username` | required | Email address / login |
+| `password` | required | Password or app password |
 | `use_ssl` | `true` | Use SSL/TLS |
 | `folders` | `[]` (all) | Folders to index. Empty `[]` = all folders |
 
@@ -46,7 +46,7 @@ You can configure multiple accounts. All emails go into one shared vector store.
 | `imap_fetch_batch` | `25` | Emails per IMAP FETCH command. Lower = gentler on rate-limited servers |
 | `imap_folder_delay` | `2.0` | Seconds to wait between folders |
 | `imap_batch_delay` | `0.5` | Seconds to wait between fetch batches |
-| `imap_max_fetches_per_cycle` | `0` | Cap fetches per cycle; `0` = unlimited. Set ~`1000–2000` for Gmail |
+| `imap_max_fetches_per_cycle` | `0` | Cap fetches per cycle; `0` = unlimited. Set ~`1000` to `2000` for Gmail |
 
 ---
 

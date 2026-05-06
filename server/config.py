@@ -42,7 +42,7 @@ class IndexerConfig(BaseModel):
     max_body_chars: int = 4000
     schedule_minutes: int = 15
     cleanup_enabled: bool = True
-    # IMAP rate-limiting — tune these for strict providers like Gmail
+    # IMAP rate-limiting. Tune these for strict providers like Gmail
     imap_fetch_batch: int = 25        # emails per FETCH command
     imap_folder_delay: float = 2.0    # seconds to wait between folders
     imap_batch_delay: float = 0.5     # seconds to wait between fetch batches

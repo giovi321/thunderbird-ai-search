@@ -7,7 +7,7 @@ Gmail requires a few extra steps compared to standard IMAP servers.
 
 ---
 
-## Authentication — App Password required
+## Authentication: App Password required
 
 Gmail does not accept your regular Google password over IMAP. You need an **App Password**:
 
@@ -29,14 +29,14 @@ accounts:
 
 ---
 
-## Folder strategy — Gmail-aware mode
+## Folder strategy: Gmail-aware mode
 
 When `folders: []`, the indexer detects Gmail (by host or by the presence of `[Gmail]/` folders) and indexes only:
 
-- `[Gmail]/All Mail` — covers every regular email once
-- `[Gmail]/Drafts`, `[Gmail]/Trash`, `[Gmail]/Spam` — sit outside All Mail
+- `[Gmail]/All Mail`: covers every regular email once
+- `[Gmail]/Drafts`, `[Gmail]/Trash`, `[Gmail]/Spam`: sit outside All Mail
 
-INBOX, Sent Mail, and every user label are skipped. In Gmail's IMAP they're views into All Mail, so fetching them duplicates work. On heavily-labelled accounts (200+ folders is common) this used to cause 3–5× duplicate fetches.
+INBOX, Sent Mail, and every user label are skipped. In Gmail's IMAP they're views into All Mail, so fetching them duplicates work. On heavily-labelled accounts (200+ folders is common) this used to cause 3 to 5x duplicate fetches.
 
 ### Enable All Mail in IMAP
 
@@ -60,7 +60,7 @@ indexer:
 
 With `imap_max_fetches_per_cycle: 1500`, each cycle ends with outcome `cap_reached` instead of `aborted_rate_limit`. Gmail tolerates capped cycles much better than hard session exhaustion. The indexer resumes from per-folder UID checkpoints on the next 15-minute tick.
 
-First sync of a 75k-message account typically takes 1–3 days of cycles before it catches up. Watch progress in the addon settings page or with `docker compose logs -f server`.
+First sync of a 75k-message account typically takes 1 to 3 days of cycles before it catches up. Watch progress in the addon settings page or with `docker compose logs -f server`.
 
 ---
 

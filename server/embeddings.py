@@ -10,7 +10,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-# Strip ASCII control chars except \t \n \r — these can crash Ollama's tokenizer.
+# Strip ASCII control chars except \t \n \r. These can crash Ollama's tokenizer.
 _CONTROL_CHAR_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 # Defensive cap well below nomic-embed-text's 2048-token context.
 # Token-density varies (URLs, code, non-English text), so 3000 chars (~750-1000 tokens)
@@ -119,34 +119,34 @@ class OllamaEmbedding(EmbeddingProvider):
         if resp.status_code == 400:
             body = resp.text[:500]
             if len(texts) == 1:
-                # Leaf of the bisect tree — log full diagnostic and skip this one.
+                # Leaf of the bisect tree. Log full diagnostic and skip this one.
                 only = texts[0]
                 digest = hashlib.sha1(only.encode("utf-8", errors="ignore")).hexdigest()[:8]
                 logger.error(
-                    "Ollama rejected single input (len=%d, hash=%s): %r — body: %s",
+                    "Ollama rejected single input (len=%d, hash=%s): %r. body: %s",
                     len(only), digest, only[:200], body,
                 )
                 return [None]
             if depth >= _MAX_BISECT_DEPTH:
                 # Stop bisecting; mark everything in this sub-batch as failed.
                 logger.error(
-                    "Ollama 400 bisect depth cap (%d) reached, skipping %d inputs — body: %s",
+                    "Ollama 400 bisect depth cap (%d) reached, skipping %d inputs. body: %s",
                     _MAX_BISECT_DEPTH, len(texts), body,
                 )
                 return [None] * len(texts)
             mid = len(texts) // 2
             logger.warning(
-                "Ollama 400 on batch of %d (depth=%d), bisecting — body: %s",
+                "Ollama 400 on batch of %d (depth=%d), bisecting. body: %s",
                 len(texts), depth, body,
             )
             left = await self._embed_or_bisect(texts[:mid], depth + 1)
             right = await self._embed_or_bisect(texts[mid:], depth + 1)
             return left + right
 
-        # Non-400 (5xx, 401, network, etc.) — propagate so the indexer can abort the cycle.
+        # Non-400 (5xx, 401, network, etc.). Propagate so the indexer can abort the cycle.
         body = resp.text[:500]
         logger.error(
-            "Ollama embed failed (%d): %s — input lengths: %s",
+            "Ollama embed failed (%d): %s. input lengths: %s",
             resp.status_code, body, [len(t) for t in texts],
         )
         resp.raise_for_status()

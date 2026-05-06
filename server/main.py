@@ -77,7 +77,7 @@ def main():
     app.state.indexer = indexer
 
     def _schedule_loop(loop: asyncio.AbstractEventLoop):
-        # Adaptive backoff state — persisted to state.json so a docker restart
+        # Adaptive backoff state. Persisted to state.json so a docker restart
         # doesn't reset us to 0 and have us hammer Gmail at base cadence while
         # cycles are still failing. (Cleared as soon as a cycle completes cleanly.)
         sched_state = indexer.get_scheduler_persisted_state()
@@ -110,12 +110,12 @@ def main():
                 multiplier = factor ** consecutive_rate_aborts
                 sleep_min = min(base * multiplier, max_min)
                 logger.warning(
-                    "Rate-limited %d cycle(s) in a row — backing off, next cycle in %.1f min (%.1fx base)",
+                    "Rate-limited %d cycle(s) in a row. Backing off, next cycle in %.1f min (%.1fx base)",
                     consecutive_rate_aborts, sleep_min, sleep_min / base,
                 )
             else:
                 if consecutive_rate_aborts > 0:
-                    logger.info("Cycle completed cleanly — resetting rate-limit backoff to 1x")
+                    logger.info("Cycle completed cleanly. Resetting rate-limit backoff to 1x")
                 consecutive_rate_aborts = 0
                 multiplier = 1.0
                 sleep_min = base

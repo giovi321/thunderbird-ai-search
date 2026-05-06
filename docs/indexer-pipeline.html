@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Thunderbird AI Search — indexer pipeline</title>
+<title>Thunderbird AI Search: indexer pipeline</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -70,7 +70,7 @@
 <body>
 <main>
   <p class="eyebrow">DIAGRAM · FLOWCHART</p>
-  <h1>Indexer pipeline — one cycle</h1>
+  <h1>Indexer pipeline: one cycle</h1>
   <p class="subtitle">Each cycle starts with a STATUS pre-pass, then runs the four-stage loop per folder. Cleanup is a separate, throttled phase that fires after the loop only when it is due.</p>
 
   <div class="frame">
@@ -258,7 +258,7 @@
   </div>
 
   <footer>
-    Steps 2–5 run interleaved per folder, not as four sequential phases over the whole mailbox · Cycle repeats every <code>schedule_minutes</code>; set to <code>0</code> to index once and stop.
+    Steps 2 to 5 run interleaved per folder, not as four sequential phases over the whole mailbox · Cycle repeats every <code>schedule_minutes</code>; set to <code>0</code> to index once and stop.
   </footer>
 </main>
 </body>

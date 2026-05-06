@@ -9,7 +9,7 @@ The indexer runs in two steps per cycle.
 
 ---
 
-## Step 1 — Per-folder loop
+## Step 1: Per-folder loop
 
 For each folder, in order:
 
@@ -27,7 +27,7 @@ These sub-steps run interleaved per folder, not as four sequential phases over t
 
 ---
 
-## Step 2 — Cleanup (optional)
+## Step 2: Cleanup (optional)
 
 Runs after step 1 if `cleanup_enabled: true` and at least `cleanup_interval_hours` have passed since the last cleanup. The indexer scans IMAP Message-IDs across all folders and removes any Qdrant entry whose Message-ID is no longer on the server.
 

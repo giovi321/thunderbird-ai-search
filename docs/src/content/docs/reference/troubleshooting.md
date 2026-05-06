@@ -15,7 +15,7 @@ description: Common problems and how to fix them.
 
 ## Indexing is slow
 
-First-time indexing downloads every email over IMAP — normal for large mailboxes. Gmail accounts may need several cycles due to rate limits; the indexer saves progress and picks up where it left off.
+First-time indexing downloads every email over IMAP, which is normal for large mailboxes. Gmail accounts may need several cycles due to rate limits; the indexer saves progress and picks up where it left off.
 
 Monitor progress:
 ```bash
@@ -44,8 +44,8 @@ Reduce `indexer.max_body_chars` for faster embedding at the cost of search quali
 
 - If using a reverse proxy, make sure it forwards all headers including `X-API-Key`
 - Check that the server URL in addon settings matches exactly (including `https://`)
-- If the browser console reports `Access-Control-Allow-Origin' does not match '*, *'`, the proxy is sending the header twice — once from FastAPI and once from itself. See the [reverse proxy guide](/thunderbird-ai-search/guides/reverse-proxy/) for the correct configuration.
-- If the browser console reports `(Reason: CORS request did not succeed). Status code: (null)`, the TLS handshake is failing — the certificate isn't trusted by Thunderbird. See the [custom certificate guide](/thunderbird-ai-search/guides/custom-certificate/).
+- If the browser console reports `Access-Control-Allow-Origin' does not match '*, *'`, the proxy is sending the header twice, once from FastAPI and once from itself. See the [reverse proxy guide](/thunderbird-ai-search/guides/reverse-proxy/) for the correct configuration.
+- If the browser console reports `(Reason: CORS request did not succeed). Status code: (null)`, the TLS handshake is failing. The certificate isn't trusted by Thunderbird. See the [custom certificate guide](/thunderbird-ai-search/guides/custom-certificate/).
 
 ## "Email not found in Thunderbird"
 
@@ -58,4 +58,4 @@ Gmail requires an [App Password](https://support.google.com/accounts/answer/1858
 ## Emails re-fetched on every restart
 
 - Make sure the `server_state` volume is configured in `docker-compose.yml`
-- Do not use `docker compose down -v` — the `-v` flag deletes volumes
+- Do not use `docker compose down -v`. The `-v` flag deletes volumes

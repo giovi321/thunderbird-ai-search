@@ -29,7 +29,7 @@ ollama pull nomic-embed-text
 git clone https://github.com/giovi321/thunderbird-ai-search.git
 cd thunderbird-ai-search
 cp config.example.yaml config.yaml
-# edit config.yaml — add your IMAP account details
+# edit config.yaml, add your IMAP account details
 
 # 3. Start
 docker compose up -d
@@ -53,8 +53,8 @@ Full setup guide → [giovi321.github.io/thunderbird-ai-search](https://giovi321
 
 The server runs in Docker and does two things:
 
-- **Search API** — takes a natural-language query from the addon, asks Ollama to embed it, and returns the closest vectors from Qdrant.
-- **Indexer** — connects to your IMAP servers, downloads new mail, asks Ollama for embedding vectors, and writes them to Qdrant. Runs on startup and re-runs every 15 minutes by default.
+- **Search API**: takes a natural-language query from the addon, asks Ollama to embed it, and returns the closest vectors from Qdrant.
+- **Indexer**: connects to your IMAP servers, downloads new mail, asks Ollama for embedding vectors, and writes them to Qdrant. Runs on startup and re-runs every 15 minutes by default.
 
 <p align="center">
   <img src="docs/indexer-pipeline.svg" alt="Indexer pipeline" width="800" />

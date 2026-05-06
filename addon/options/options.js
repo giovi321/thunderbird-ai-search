@@ -125,8 +125,8 @@ async function loadStats() {
     document.getElementById("total-emails").textContent = stats.total_emails.toLocaleString();
     document.getElementById("total-accounts").textContent = stats.accounts.length;
   } catch (e) {
-    document.getElementById("total-emails").textContent = "—";
-    document.getElementById("total-accounts").textContent = "—";
+    document.getElementById("total-emails").textContent = "...";
+    document.getElementById("total-accounts").textContent = "...";
   }
 }
 
@@ -134,12 +134,12 @@ async function loadStats() {
 //
 // The indexer is a 2-step process that matches the actual server architecture:
 //
-//   Step 1 — Indexing: per-folder loop (fetch → filter → embed → upsert → checkpoint).
+//   Step 1: Indexing: per-folder loop (fetch → filter → embed → upsert → checkpoint).
 //            Server's `phase` flips rapidly between "fetching" / "embedding" within
 //            this step as it walks the folder list. We collapse them into one card
 //            and surface the current sub-activity as a sub-status line.
 //
-//   Step 2 — Cleanup: optional pass that scans IMAP MESSAGE-IDs to remove Qdrant
+//   Step 2: Cleanup: optional pass that scans IMAP MESSAGE-IDs to remove Qdrant
 //            entries for deleted emails. Throttled to once per N hours.
 //
 // The earlier 4-step UI ("fetch / filter / embed / cleanup" as separate sequential
@@ -162,9 +162,9 @@ async function loadIndexerStatus() {
       let html = `<div class="indexer-idle">`;
       html += `<div class="indexer-idle-label">`;
       if (status.last_run) {
-        html += `Idle — Last cycle ended ${formatDate(status.last_run)} (${formatRelative(status.last_run)})`;
+        html += `Idle. Last cycle ended ${formatDate(status.last_run)} (${formatRelative(status.last_run)})`;
       } else {
-        html += `Idle — No indexing runs yet`;
+        html += `Idle. No indexing runs yet`;
       }
       html += `</div>`;
       const schedRows = [];
@@ -197,7 +197,7 @@ async function loadIndexerStatus() {
     const indexingActive = indexingPhases.includes(status.phase);
     const cleanupActive = status.phase === "cleanup";
 
-    let html = `<div class="auto-refresh" id="auto-refresh-label">auto-refreshing every 3s — Account: ${escapeHtml(status.current_account)}</div>`;
+    let html = `<div class="auto-refresh" id="auto-refresh-label">auto-refreshing every 3s. Account: ${escapeHtml(status.current_account)}</div>`;
     html += `<div class="pipeline">`;
     html += renderIndexingStep(status, indexingActive, cleanupActive);
     html += renderCleanupStep(status, cleanupActive, indexingActive);
@@ -322,7 +322,7 @@ function renderCleanupStep(status, active, indexingActive) {
     progressHtml = `<div class="step-progress"><div class="step-progress-fill" style="width:${cPct}%"></div></div>`;
   } else if (indexingActive) {
     const interval = (status.scheduler && status.scheduler.cleanup_interval_hours) || 24;
-    detail = `Pending — runs after indexing if eligible (throttle: ${interval}h)`;
+    detail = `Pending. Runs after indexing if eligible (throttle: ${interval}h)`;
   }
 
   let html = `<div class="pipeline-step ${cls}">`;
@@ -449,7 +449,7 @@ function renderAccountCard(acct) {
     nextRunLine = `Next run: ${formatDate(acct.next_run_at)} (${formatRelative(acct.next_run_at)})`;
   }
 
-  // Lifetime totals — survive history-window pruning so the user always sees
+  // Lifetime totals: survive history-window pruning so the user always sees
   // the cumulative big picture even when individual cycles roll off.
   let lifetimeLine = "";
   const lt = acct.lifetime || {};
@@ -462,14 +462,14 @@ function renderAccountCard(acct) {
     lifetimeLine = `Lifetime: ${parts.join(" · ")}${suffix}`;
   }
 
-  // Manual pause state — when set, the scheduler skips this account and
+  // Manual pause state: when set, the scheduler skips this account and
   // the dashboard shows a banner + "Resume" button. Manual reindex still
   // bypasses the pause if the user really wants to force a cycle.
   const paused = acct.paused || {};
   let pausedHtml = "";
   let pauseButtonHtml = "";
   if (paused.until) {
-    pausedHtml = `<div class="account-paused">Paused until ${escapeHtml(formatDate(paused.until))} (${escapeHtml(formatRelative(paused.until))}). Scheduled cycles skipped — manual reindex still works.</div>`;
+    pausedHtml = `<div class="account-paused">Paused until ${escapeHtml(formatDate(paused.until))} (${escapeHtml(formatRelative(paused.until))}). Scheduled cycles skipped, but manual reindex still works.</div>`;
     pauseButtonHtml = `<button class="btn-resume" data-account="${escapeHtml(acct.name)}">Resume</button>`;
   } else {
     pauseButtonHtml = `<button class="btn-pause" data-account="${escapeHtml(acct.name)}" title="Pause scheduled cycles for 6 hours">Pause 6h</button>`;
@@ -490,7 +490,7 @@ function renderAccountCard(acct) {
     lastErrorLine = `<div class="account-error">${escapeHtml(lastRun.error)}</div>`;
   }
 
-  // Simple 24h activity counters — just numbers, no comparisons against
+  // Simple 24h activity counters: just numbers, no comparisons against
   // hypothetical Gmail limits, no caveat text. Tracks what we sent, not what
   // Gmail allows.
   let activityLine = "";
@@ -503,11 +503,11 @@ function renderAccountCard(acct) {
     activityLine = `Activity (last 24h): ${parts.join(" · ")}`;
   }
 
-  // Per-folder breakdown — preserve open/closed state across auto-refreshes
+  // Per-folder breakdown: preserve open/closed state across auto-refreshes
   let folderListHtml = "";
   if (foldersDetail.length > 0) {
     const rows = foldersDetail.slice(0, 50).map(f => {
-      const pct = f.indexed_pct != null ? `${f.indexed_pct}%` : "—";
+      const pct = f.indexed_pct != null ? `${f.indexed_pct}%` : "...";
       const total = f.approx_total != null ? f.approx_total.toLocaleString() : "?";
       const indexed = f.last_uid.toLocaleString();
       const remaining = f.remaining != null ? f.remaining.toLocaleString() : "?";
@@ -532,7 +532,7 @@ function renderAccountCard(acct) {
     `;
   }
 
-  // Recent cycle history — also state-preserving
+  // Recent cycle history: also state-preserving
   let historyHtml = "";
   if (history.length > 0) {
     const rows = history.slice().reverse().map(h => {
@@ -584,7 +584,7 @@ function renderAccountCard(acct) {
             <ul>
               <li>Fetches new emails since the last cycle and adds them to the index.</li>
               <li>Runs the cleanup pass that removes stale entries for emails no longer on the server.</li>
-              <li>Counts against this account's IMAP rate limits — large mailboxes can be throttled and produce a partial cycle.</li>
+              <li>Counts against this account's IMAP rate limits. Large mailboxes can be throttled and produce a partial cycle.</li>
               <li>Bypasses any active pause on this account.</li>
               <li>Cannot start while another cycle is in progress (the server returns 409).</li>
             </ul>
@@ -613,9 +613,9 @@ function reindexExplanationHtml(scope) {
     ? "all configured accounts"
     : `<strong>${escapeHtml(scope)}</strong>`;
   return `
-    <p>Trigger an immediate indexing cycle for ${target} outside the normal schedule? This does <strong>not</strong> wipe and rebuild the index — it adds new emails and removes stale entries.</p>
+    <p>Trigger an immediate indexing cycle for ${target} outside the normal schedule? This does <strong>not</strong> wipe and rebuild the index. It adds new emails and removes stale entries.</p>
     <ul>
-      <li>Counts against IMAP rate limits — large mailboxes (Gmail especially) may be throttled and produce a partial cycle.</li>
+      <li>Counts against IMAP rate limits. Large mailboxes (Gmail especially) may be throttled and produce a partial cycle.</li>
       <li>Bypasses any active pause.</li>
       <li>Cannot start while another cycle is in progress.</li>
     </ul>
@@ -662,7 +662,7 @@ async function reindexAll() {
     loadIndexerStatus();
   } catch (e) {
     if (e.status === 409) {
-      showReindexFeedback("Indexer is already running — let the current cycle finish first", "warn");
+      showReindexFeedback("Indexer is already running. Let the current cycle finish first", "warn");
     } else {
       showReindexFeedback(`Could not start reindex: ${e.message}`, "err");
     }
@@ -683,7 +683,7 @@ async function reindexAccount(name) {
     loadIndexerStatus();
   } catch (e) {
     if (e.status === 409) {
-      showReindexFeedback("Indexer is already running — let the current cycle finish first", "warn");
+      showReindexFeedback("Indexer is already running. Let the current cycle finish first", "warn");
     } else {
       showReindexFeedback(`Could not start reindex for ${name}: ${e.message}`, "err");
     }
@@ -703,7 +703,7 @@ async function pauseAccount(name) {
 async function resumeAccount(name) {
   try {
     await apiPost(`/accounts/${encodeURIComponent(name)}/resume`);
-    showReindexFeedback(`Resumed ${name} — next scheduled cycle will run normally`, "ok");
+    showReindexFeedback(`Resumed ${name}. Next scheduled cycle will run normally`, "ok");
     loadAccounts();
   } catch (e) {
     showReindexFeedback(`Could not resume ${name}: ${e.message}`, "err");

@@ -1,4 +1,4 @@
-# Thunderbird AI Search — Configuration
+# Thunderbird AI Search Configuration
 # Copy this file to config.yaml and edit to match your setup.
 #
 # Passwords can also be set via environment variables in docker-compose.yml:
@@ -65,7 +65,7 @@ indexer:
   max_body_chars: 4000               # truncate email body before embedding
   schedule_minutes: 15               # re-index interval (0 = index once then stop)
   cleanup_enabled: true              # remove Qdrant entries for deleted emails
-  # IMAP rate-limiting — tune these for strict providers like Gmail.
+  # IMAP rate-limiting. Tune these for strict providers like Gmail.
   # Higher values = faster but more likely to hit rate limits.
   # Lower values = slower but safer for Gmail.
   imap_fetch_batch: 25               # emails per IMAP FETCH command (1 = no batching)
