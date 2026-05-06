@@ -1,11 +1,10 @@
 // Popup search bar. Submits open the results in a new tab and close the popup.
 
-const SEARCH_PAGE = "search/search.html";
-
 async function openSearch(query) {
-  const url = query
-    ? `${SEARCH_PAGE}?q=${encodeURIComponent(query)}`
-    : SEARCH_PAGE;
+  // Resolve to an absolute moz-extension:// URL so the path isn't treated as
+  // relative to the popup's own location (popup/popup.html).
+  const base = messenger.runtime.getURL("search/search.html");
+  const url = query ? `${base}?q=${encodeURIComponent(query)}` : base;
   await messenger.tabs.create({ url });
   window.close();
 }
