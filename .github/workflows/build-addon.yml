@@ -1,0 +1,43 @@
+name: Build Addon
+
+on:
+  push:
+    paths:
+      - 'addon/**'
+      - '.github/workflows/build-addon.yml'
+  pull_request:
+    paths:
+      - 'addon/**'
+      - '.github/workflows/build-addon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Read addon version
+        id: meta
+        run: |
+          version=$(jq -r '.version' addon/manifest.json)
+          short_sha=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          xpi_name="ai-email-search-${version}-${short_sha}.xpi"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "xpi_name=${xpi_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Build .xpi
+        run: |
+          cd addon
+          zip -r "../${{ steps.meta.outputs.xpi_name }}" . -x "*.DS_Store"
+          cd ..
+          ls -la "${{ steps.meta.outputs.xpi_name }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.xpi_name }}
+          path: ${{ steps.meta.outputs.xpi_name }}
+          if-no-files-found: error

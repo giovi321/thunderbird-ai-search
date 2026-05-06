@@ -8,6 +8,8 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from server import __version__
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,7 +48,7 @@ def create_app(lifespan=None) -> FastAPI:
 
     app = FastAPI(
         title="Thunderbird AI Search",
-        version="1.0.0",
+        version=__version__,
         lifespan=lifespan,
         dependencies=[Depends(check_api_key)],
     )
@@ -78,6 +80,10 @@ def create_app(lifespan=None) -> FastAPI:
             r.pop("id", None)
 
         return {"results": results}
+
+    @app.get("/version")
+    async def version():
+        return {"version": __version__}
 
     @app.get("/health")
     async def health():

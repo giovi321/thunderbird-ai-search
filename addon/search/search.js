@@ -177,6 +177,30 @@ function renderAccountCards(accounts) {
   }
 }
 
+async function loadVersion() {
+  const el = document.getElementById("version-info");
+  if (!el) return;
+  const clientVersion = messenger.runtime.getManifest().version;
+  el.textContent = `addon v${clientVersion}`;
+  el.classList.remove("mismatch");
+  el.title = `Addon v${clientVersion}`;
+  try {
+    const data = await apiRequest("/version");
+    const serverVersion = data.version || "unknown";
+    if (serverVersion === clientVersion) {
+      el.textContent = `v${clientVersion}`;
+      el.title = `Addon v${clientVersion} · Server v${serverVersion}`;
+    } else {
+      el.textContent = `addon v${clientVersion} · server v${serverVersion}`;
+      el.classList.add("mismatch");
+      el.title = `Version mismatch — addon v${clientVersion} vs server v${serverVersion}. Please update both to match.`;
+    }
+  } catch (e) {
+    el.textContent = `addon v${clientVersion} · server unreachable`;
+    el.title = `Could not fetch server version: ${e.message}`;
+  }
+}
+
 async function loadHealth() {
   const el = document.getElementById("health-indicators");
   try {
@@ -299,5 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("reindex-all-btn").addEventListener("click", reindexAll);
 
   // Initial load
+  loadVersion();
   loadAccounts();
 });

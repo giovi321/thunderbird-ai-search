@@ -39,7 +39,64 @@
       max-width: 600px;
       line-height: 1.5;
     }
-    h1 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--accent); }
+    h1 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--accent); }
+
+    /* Version banner under title */
+    .version-banner {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+    .version-banner.mismatch {
+      color: var(--warning);
+      background: rgba(230, 81, 0, 0.08);
+      border: 1px solid var(--warning);
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      font-weight: 500;
+    }
+    .version-banner.unreachable {
+      color: var(--text-secondary);
+    }
+
+    /* Keyboard shortcut row */
+    .shortcut-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .shortcut-row input[type="text"] {
+      flex: 1;
+      min-width: 180px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+    .shortcut-row input[type="text"]:focus {
+      background: var(--bg);
+      border-color: var(--accent);
+    }
+    .shortcut-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .shortcut-hint kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+      padding: 1px 5px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+    }
+    .shortcut-feedback {
+      font-size: 12px;
+      margin-top: 6px;
+      min-height: 16px;
+    }
+    .shortcut-feedback.ok { color: var(--success); }
+    .shortcut-feedback.err { color: var(--error); }
     h2 { font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     .field { margin-bottom: 16px; }
     label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text-secondary); }
@@ -450,6 +507,8 @@
 <body>
   <h1>AI Email Search Settings</h1>
 
+  <div id="version-banner" class="version-banner"></div>
+
   <!-- Connection -->
   <h2>Connection</h2>
   <div class="field">
@@ -473,6 +532,22 @@
       <label><input type="radio" name="open-in" value="tab" checked> New tab</label>
       <label><input type="radio" name="open-in" value="window"> New window</label>
     </div>
+  </div>
+
+  <!-- Keyboard shortcut -->
+  <h2>Keyboard Shortcut</h2>
+  <div class="field">
+    <label for="shortcut-input">Open AI Email Search in a new tab</label>
+    <div class="shortcut-row">
+      <input type="text" id="shortcut-input" readonly placeholder="Click and press a key combination">
+      <button type="button" class="btn-secondary" id="shortcut-reset">Reset to default</button>
+      <button type="button" class="btn-secondary" id="shortcut-clear">Clear</button>
+    </div>
+    <div class="shortcut-hint">
+      Click the field, then press the desired combination (e.g. <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd>).
+      Must include at least one modifier (Ctrl, Alt, Shift, or Cmd).
+    </div>
+    <div id="shortcut-feedback" class="shortcut-feedback"></div>
   </div>
 
   <div class="actions">

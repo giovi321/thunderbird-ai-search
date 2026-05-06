@@ -58,6 +58,22 @@ header h1 {
   color: var(--accent);
 }
 
+.header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.version-info {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.version-info.mismatch {
+  color: var(--warning);
+  font-weight: 600;
+}
+
 .header-right {
   display: flex;
   gap: 8px;

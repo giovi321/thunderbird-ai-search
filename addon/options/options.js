@@ -2,6 +2,9 @@
 
 let pollInterval = null;
 
+const SHORTCUT_COMMAND_NAME = "open-search";
+const SHORTCUT_DEFAULT = "Ctrl+Alt+S";
+
 async function loadSettings() {
   const data = await messenger.storage.local.get("settings");
   const s = data.settings || {};
@@ -708,6 +711,7 @@ async function resumeAccount(name) {
 }
 
 async function testConnection() {
+  await loadVersionBanner();
   await loadHealth();
   await loadStats();
   await loadIndexerStatus();
@@ -715,6 +719,7 @@ async function testConnection() {
 }
 
 function refreshAll() {
+  loadVersionBanner();
   loadHealth();
   loadStats();
   loadIndexerStatus();
@@ -777,10 +782,157 @@ function formatDuration(seconds) {
   return remM ? `${h}h ${remM}m` : `${h}h`;
 }
 
+// --- Version banner ---
+
+async function loadVersionBanner() {
+  const el = document.getElementById("version-banner");
+  if (!el) return;
+  const clientVersion = messenger.runtime.getManifest().version;
+  el.className = "version-banner";
+  el.textContent = `Addon v${clientVersion} — checking server…`;
+  try {
+    const data = await apiGet("/version");
+    const serverVersion = data.version || "unknown";
+    if (serverVersion === clientVersion) {
+      el.textContent = `Addon v${clientVersion} · Server v${serverVersion}`;
+    } else {
+      el.classList.add("mismatch");
+      el.textContent = `Version mismatch: addon v${clientVersion} vs server v${serverVersion}. Please update both to the same version.`;
+    }
+  } catch (e) {
+    el.classList.add("unreachable");
+    el.textContent = `Addon v${clientVersion} · server unreachable (${e.message})`;
+  }
+}
+
+// --- Keyboard shortcut ---
+//
+// Thunderbird's MV2 commands API lets us define a default shortcut in
+// manifest.json and update it at runtime via messenger.commands.update().
+// Empty shortcut string disables the keybinding entirely.
+
+function formatShortcutFromEvent(e) {
+  const parts = [];
+  // Order matters for the WebExtensions commands API — Ctrl/MacCtrl, Alt, Shift, then key.
+  if (e.ctrlKey) parts.push("Ctrl");
+  if (e.altKey) parts.push("Alt");
+  if (e.shiftKey) parts.push("Shift");
+  if (e.metaKey) parts.push("Command");
+
+  let key = e.key;
+  // Normalize special keys to the API's expected names
+  const SPECIAL = {
+    " ": "Space",
+    "ArrowUp": "Up",
+    "ArrowDown": "Down",
+    "ArrowLeft": "Left",
+    "ArrowRight": "Right",
+    "Escape": "Escape",
+    "Tab": "Tab",
+    "Insert": "Insert",
+    "Delete": "Delete",
+    "Home": "Home",
+    "End": "End",
+    "PageUp": "PageUp",
+    "PageDown": "PageDown",
+    "Enter": "Enter",
+    "Backspace": "Backspace",
+    "Comma": "Comma",
+    "Period": "Period",
+  };
+  if (SPECIAL[key]) {
+    key = SPECIAL[key];
+  } else if (/^F([1-9]|1[0-2])$/.test(key)) {
+    // Function keys are already in the right form (F1..F12)
+  } else if (key.length === 1) {
+    key = key.toUpperCase();
+  } else {
+    return null; // unsupported key (Shift, Ctrl alone, etc.)
+  }
+
+  // Reject pure modifiers
+  if (["Control", "Shift", "Alt", "Meta"].includes(key)) return null;
+  // Must include at least one modifier (besides Shift+letter alone, which the API rejects)
+  const hasNonShiftModifier = e.ctrlKey || e.altKey || e.metaKey;
+  const isFunctionKey = /^F([1-9]|1[0-2])$/.test(key);
+  if (!hasNonShiftModifier && !isFunctionKey) return null;
+
+  parts.push(key);
+  return parts.join("+");
+}
+
+function setShortcutFeedback(message, kind) {
+  const el = document.getElementById("shortcut-feedback");
+  if (!el) return;
+  el.className = `shortcut-feedback ${kind || ""}`;
+  el.textContent = message || "";
+}
+
+async function loadCurrentShortcut() {
+  const input = document.getElementById("shortcut-input");
+  if (!input || !messenger.commands || !messenger.commands.getAll) return;
+  try {
+    const cmds = await messenger.commands.getAll();
+    const cmd = cmds.find(c => c.name === SHORTCUT_COMMAND_NAME);
+    input.value = (cmd && cmd.shortcut) ? cmd.shortcut : "";
+  } catch (e) {
+    setShortcutFeedback(`Could not read current shortcut: ${e.message}`, "err");
+  }
+}
+
+async function updateShortcut(shortcut) {
+  if (!messenger.commands || !messenger.commands.update) {
+    setShortcutFeedback("This Thunderbird version does not support updating shortcuts at runtime.", "err");
+    return;
+  }
+  try {
+    await messenger.commands.update({
+      name: SHORTCUT_COMMAND_NAME,
+      shortcut: shortcut, // empty string clears it
+    });
+    document.getElementById("shortcut-input").value = shortcut;
+    setShortcutFeedback(
+      shortcut ? `Shortcut set to ${shortcut}` : "Shortcut cleared",
+      "ok"
+    );
+  } catch (e) {
+    setShortcutFeedback(`Could not set shortcut: ${e.message}`, "err");
+  }
+}
+
+function initShortcutUI() {
+  const input = document.getElementById("shortcut-input");
+  const resetBtn = document.getElementById("shortcut-reset");
+  const clearBtn = document.getElementById("shortcut-clear");
+  if (!input) return;
+
+  input.addEventListener("focus", () => {
+    setShortcutFeedback("Press the desired key combination…");
+  });
+
+  input.addEventListener("keydown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Ignore presses of pure modifier keys — wait for a real key.
+    if (["Control", "Shift", "Alt", "Meta"].includes(e.key)) return;
+    const formatted = formatShortcutFromEvent(e);
+    if (!formatted) {
+      setShortcutFeedback("Invalid combination — must include Ctrl, Alt, or Cmd plus a key (or be an F-key).", "err");
+      return;
+    }
+    updateShortcut(formatted);
+  });
+
+  resetBtn.addEventListener("click", () => updateShortcut(SHORTCUT_DEFAULT));
+  clearBtn.addEventListener("click", () => updateShortcut(""));
+}
+
 // --- Init ---
 
 document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
+  loadCurrentShortcut();
+  initShortcutUI();
   document.getElementById("save-btn").addEventListener("click", saveSettings);
   document.getElementById("test-btn").addEventListener("click", testConnection);
   document.getElementById("reindex-all-btn").addEventListener("click", reindexAll);

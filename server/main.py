@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 
+from server import __version__
 from server.api import create_app
 from server.config import load_config
 from server.embeddings import OllamaEmbedding
@@ -27,6 +28,8 @@ def main():
         level=getattr(logging, config.log_level.upper(), logging.INFO),
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
     )
+
+    logger.info("Thunderbird AI Search server v%s starting", __version__)
 
     if not config.accounts:
         logger.error("No IMAP accounts configured. Add at least one account to config.yaml")
