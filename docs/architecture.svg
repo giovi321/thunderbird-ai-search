@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="800" height="560">
+  <defs>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.9" fill="rgba(28,25,23,0.10)"/>
+    </pattern>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#57534e"/>
+    </marker>
+    <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8E4449"/>
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#efeee5"/>
+  <rect width="100%" height="100%" fill="url(#dots)" opacity="0.55"/>
+
+  <rect x="288" y="208" width="488" height="140" rx="8"
+        fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+        stroke-dasharray="4,4"/>
+  <rect x="312" y="200" width="60" height="16" fill="#efeee5"/>
+  <text x="320" y="212" fill="#78716c" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        letter-spacing="0.14em">DOCKER</text>
+
+  <line x1="400" y1="136" x2="400" y2="240"
+        stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="412" y="170" width="64" height="14" rx="2" fill="#efeee5"/>
+  <text x="444" y="180" fill="#57534e" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.06em">IMAP FETCH</text>
+
+  <line x1="208" y1="280" x2="320" y2="280"
+        stroke="#8E4449" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+  <rect x="232" y="262" width="64" height="14" rx="2" fill="#efeee5"/>
+  <text x="264" y="272" fill="#8E4449" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.06em">/SEARCH</text>
+
+  <line x1="480" y1="280" x2="600" y2="280"
+        stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="510" y="262" width="80" height="14" rx="2" fill="#efeee5"/>
+  <text x="550" y="272" fill="#57534e" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.06em">UPSERT/QUERY</text>
+
+  <line x1="400" y1="320" x2="400" y2="400"
+        stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="412" y="350" width="44" height="14" rx="2" fill="#efeee5"/>
+  <text x="434" y="360" fill="#57534e" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.06em">EMBED</text>
+
+  <rect x="320" y="64" width="160" height="72" rx="6" fill="#faf7f2"/>
+  <rect x="320" y="64" width="160" height="72" rx="6"
+        fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+  <rect x="328" y="72" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="346" y="81" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">EXT</text>
+  <text x="400" y="106" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">IMAP Mail Servers</text>
+  <text x="400" y="122" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">Gmail · Fastmail · …</text>
+
+  <rect x="48" y="240" width="160" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="48" y="240" width="160" height="80" rx="6"
+        fill="rgba(87,83,78,0.10)" stroke="#78716c" stroke-width="1"/>
+  <rect x="56" y="248" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(120,113,108,0.55)" stroke-width="0.8"/>
+  <text x="72" y="257" fill="#57534e" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">UI</text>
+  <text x="128" y="284" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Thunderbird Addon</text>
+  <text x="128" y="302" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">WebExtension · MV2</text>
+
+  <rect x="320" y="240" width="160" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="320" y="240" width="160" height="80" rx="6"
+        fill="rgba(142,68,73,0.10)" stroke="#8E4449" stroke-width="1"/>
+  <rect x="328" y="248" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(142,68,73,0.55)" stroke-width="0.8"/>
+  <text x="346" y="257" fill="#8E4449" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">API</text>
+  <text x="400" y="284" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">FastAPI Server</text>
+  <text x="400" y="302" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">search + indexer · :8342</text>
+
+  <rect x="600" y="240" width="160" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="600" y="240" width="160" height="80" rx="6"
+        fill="rgba(28,25,23,0.05)" stroke="#57534e" stroke-width="1"/>
+  <rect x="608" y="248" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(87,83,78,0.55)" stroke-width="0.8"/>
+  <text x="624" y="257" fill="#57534e" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">DB</text>
+  <text x="680" y="284" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Qdrant</text>
+  <text x="680" y="302" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">vector store · :6333</text>
+
+  <rect x="320" y="400" width="160" height="72" rx="6" fill="#faf7f2"/>
+  <rect x="320" y="400" width="160" height="72" rx="6"
+        fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+  <rect x="328" y="408" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="344" y="417" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">AI</text>
+  <text x="400" y="442" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Ollama</text>
+  <text x="400" y="458" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">nomic-embed-text · :11434</text>
+
+  <line x1="48" y1="500" x2="752" y2="500"
+        stroke="rgba(28,25,23,0.10)" stroke-width="0.8"/>
+  <text x="48" y="516" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <rect x="120" y="508" width="14" height="10" rx="2"
+        fill="rgba(142,68,73,0.10)" stroke="#8E4449" stroke-width="1"/>
+  <text x="140" y="517" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">focal</text>
+
+  <rect x="200" y="508" width="14" height="10" rx="2"
+        fill="rgba(87,83,78,0.10)" stroke="#78716c" stroke-width="1"/>
+  <text x="220" y="517" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">input</text>
+
+  <rect x="280" y="508" width="14" height="10" rx="2"
+        fill="rgba(28,25,23,0.05)" stroke="#57534e" stroke-width="1"/>
+  <text x="300" y="517" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">store</text>
+
+  <rect x="360" y="508" width="14" height="10" rx="2"
+        fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+  <text x="380" y="517" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">external</text>
+
+  <rect x="448" y="508" width="14" height="10" rx="2"
+        fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+        stroke-dasharray="3,2"/>
+  <text x="468" y="517" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">trust boundary</text>
+
+  <line x1="580" y1="513" x2="608" y2="513" stroke="#8E4449" stroke-width="1.4"
+        marker-end="url(#arrow-accent)"/>
+  <text x="616" y="517" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">primary flow</text>
+</svg>

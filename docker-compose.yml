@@ -1,0 +1,35 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    ports:
+      - "8342:8342"
+    volumes:
+      # Mount your config file (copy config.example.yaml to config.yaml and edit)
+      - ./config.yaml:/app/config.yaml:ro
+      # Persist indexer state so it doesn't re-fetch all emails on restart
+      - server_state:/root/.config/thunderbird-ai-search
+    environment:
+      # Internal Docker networking — do not change these
+      - TAIS_QDRANT_URL=http://qdrant:6333
+      - TAIS_OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - TAIS_API_HOST=0.0.0.0
+      # Set your timezone (used for logs and IMAP SINCE dates)
+      - TZ=Europe/Rome
+    extra_hosts:
+      # Allows the container to reach Ollama running on the host
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+volumes:
+  qdrant_data:
+  server_state:

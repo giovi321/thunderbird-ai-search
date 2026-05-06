@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Email Search — Settings</title>
+  <style>
+    :root {
+      --accent: #086A78;
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-card: #ffffff;
+      --text: #1a1a1a;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --border: #e0e0e0;
+      --success: #2e7d32;
+      --error: #c62828;
+      --warning: #e65100;
+      --radius: 8px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --bg-secondary: #2a2a2a;
+        --bg-card: #2a2a2a;
+        --text: #e0e0e0;
+        --text-secondary: #aaaaaa;
+        --text-muted: #777777;
+        --border: #444444;
+        --accent: #0da3b8;
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+    h1 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--accent); }
+    h2 { font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text-secondary); }
+    input[type="text"], input[type="password"], input[type="number"] {
+      width: 100%; padding: 8px 12px; font-size: 14px;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--bg); color: var(--text);
+    }
+    input:focus { outline: none; border-color: var(--accent); }
+    .radio-group { display: flex; gap: 16px; margin-top: 4px; }
+    .radio-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 14px; color: var(--text); }
+    button {
+      padding: 8px 16px; font-size: 13px; font-weight: 500;
+      border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border);
+    }
+    .btn-primary { background: var(--accent); color: white; border: none; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--bg-secondary); color: var(--text); }
+    .btn-secondary:hover { background: var(--border); }
+    .actions { display: flex; gap: 8px; margin-top: 20px; }
+    .saved-msg { color: var(--success); font-size: 13px; margin-left: 8px; }
+
+    /* Server status */
+    .status-section { margin-top: 24px; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .status-card {
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .status-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .status-card-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .health-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+    }
+    .health-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .health-dot.ok { background: var(--success); }
+    .health-dot.err { background: var(--error); }
+    .health-label { font-size: 14px; color: var(--text); }
+    .health-status { font-size: 13px; color: var(--text-secondary); margin-left: auto; }
+
+    /* Pipeline steps */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 12px;
+    }
+    .pipeline-step {
+      padding: 10px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      position: relative;
+    }
+    .pipeline-step:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+    .pipeline-step:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); }
+    .pipeline-step:only-child { border-radius: var(--radius); border-bottom: 1px solid var(--border); }
+    .pipeline-step.active { background: rgba(8, 106, 120, 0.06); border-color: var(--accent); }
+    .pipeline-step.active + .pipeline-step { border-top-color: var(--accent); }
+    .pipeline-step.done { opacity: 0.5; }
+    .pipeline-step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .step-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-icon.pending { background: var(--border); color: var(--text-muted); }
+    .step-icon.active { background: var(--accent); color: white; }
+    .step-icon.done { background: var(--success); color: white; }
+    .step-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .step-pct { font-size: 12px; color: var(--accent); margin-left: auto; font-weight: 600; }
+    .step-detail { font-size: 12px; color: var(--text-secondary); margin-left: 26px; white-space: pre-line; }
+    .step-progress {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 6px 0 0 26px;
+    }
+    .step-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .indexer-idle {
+      padding: 14px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .indexer-idle-label { font-size: 13px; color: var(--text-secondary); }
+    .indexer-meta { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    .indexer-error { font-size: 13px; color: var(--error); margin-top: 8px; }
+    .auto-refresh { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+
+    /* Outcome chips */
+    .outcome { font-weight: 600; }
+    .outcome.ok { color: var(--success); }
+    .outcome.warn { color: var(--warning); }
+    .outcome.err { color: var(--error); }
+    .account-error {
+      font-size: 12px;
+      color: var(--error);
+      margin: 6px 0;
+      padding: 4px 8px;
+      background: rgba(198, 40, 40, 0.08);
+      border-radius: 4px;
+    }
+
+    /* Collapsible details */
+    .details-toggle {
+      font-size: 11px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 6px 0;
+      margin-top: 6px;
+      text-align: left;
+    }
+    .details-toggle:hover { color: var(--accent); }
+    .folder-list, .history-list {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px 0 0 14px;
+      border-left: 2px solid var(--border);
+      margin: 4px 0 4px 6px;
+    }
+    .folder-list.open, .history-list.open { display: flex; }
+    .folder-row { font-size: 11px; }
+    .folder-row-top { display: flex; justify-content: space-between; }
+    .folder-name { color: var(--text); font-weight: 500; word-break: break-all; }
+    .folder-pct { color: var(--accent); font-weight: 600; flex-shrink: 0; margin-left: 8px; }
+    .folder-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 3px 0;
+      overflow: hidden;
+    }
+    .folder-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .folder-row-detail { color: var(--text-muted); font-size: 10px; }
+    .history-row {
+      display: grid;
+      grid-template-columns: 80px 80px 60px 1fr;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 2px 0;
+    }
+    .history-when { color: var(--text-muted); text-align: right; }
+
+    /* Reindex inline feedback (replaces alert dialogs) */
+    .reindex-feedback {
+      font-size: 13px;
+      margin: 8px 0;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .reindex-feedback.hidden { display: none; }
+    .reindex-feedback.ok {
+      background: rgba(46, 125, 50, 0.1);
+      color: var(--success);
+      border-color: var(--success);
+    }
+    .reindex-feedback.warn {
+      background: rgba(230, 81, 0, 0.1);
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+    .reindex-feedback.err {
+      background: rgba(198, 40, 40, 0.1);
+      color: var(--error);
+      border-color: var(--error);
+    }
+    .outcome.info { color: var(--text-secondary); }
+
+    /* Sub-step rows under the Indexing card (Fetch / Filter / Embed in parallel) */
+    .substeps {
+      margin: 8px 0 0 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 12px;
+    }
+    .substep {
+      display: grid;
+      grid-template-columns: 18px minmax(140px, max-content) 1fr;
+      gap: 8px;
+      align-items: baseline;
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: var(--text-secondary);
+    }
+    .substep.active {
+      background: rgba(8, 106, 120, 0.08);
+      color: var(--text);
+    }
+    .substep-marker { color: var(--text-muted); font-weight: 600; }
+    .substep.active .substep-marker { color: var(--accent); }
+    .substep-label { font-weight: 500; }
+    .substep-value { color: var(--text); }
+
+    /* Lifetime stats line — separator from the rest of the per-account details */
+    .account-lifetime {
+      color: var(--text-muted);
+      font-size: 11px;
+      padding-top: 4px;
+      border-top: 1px dashed var(--border);
+      margin-top: 4px;
+    }
+
+    /* Per-account pause */
+    .account-paused {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(120, 120, 120, 0.12);
+      border-left: 3px solid var(--text-muted);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .account-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
+    }
+    .btn-pause, .btn-resume {
+      padding: 4px 12px;
+      font-size: 12px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .btn-pause { color: var(--text-secondary); }
+    .btn-pause:hover { background: rgba(230, 81, 0, 0.05); border-color: var(--warning); color: var(--warning); }
+    .btn-resume { color: var(--success); border-color: var(--success); }
+    .btn-resume:hover { background: rgba(46, 125, 50, 0.08); }
+
+    /* Account cards */
+    .account-card {
+      padding: 12px 14px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .account-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .account-name { font-weight: 600; font-size: 14px; }
+    .account-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    .account-badge.idle { background: var(--bg-card); color: var(--text-muted); }
+    .account-badge.indexing { background: rgba(8, 106, 120, 0.15); color: var(--accent); }
+    .account-badge.error { background: rgba(198, 40, 40, 0.1); color: var(--error); }
+    .account-details {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .btn-reindex {
+      padding: 4px 12px;
+      font-size: 12px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--accent);
+    }
+    .btn-reindex:hover { background: rgba(8, 106, 120, 0.05); border-color: var(--accent); }
+    .reindex-all-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
+
+    /* Info icon + popover explaining what Reindex does */
+    .btn-info {
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-info:hover { color: var(--accent); border-color: var(--accent); }
+    .info-anchor { position: relative; display: inline-flex; align-items: center; }
+    .info-popover {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: -8px;
+      width: 320px;
+      max-width: calc(100vw - 40px);
+      padding: 10px 12px;
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      font-size: 12px;
+      line-height: 1.45;
+      z-index: 10;
+      display: none;
+    }
+    .info-popover.open { display: block; }
+    .info-popover h4 { font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--accent); }
+    .info-popover ul { margin: 4px 0 0 16px; color: var(--text-secondary); }
+    .info-popover li { margin: 2px 0; }
+    .info-popover::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 17px;
+      border: 6px solid transparent;
+      border-top-color: var(--border);
+    }
+
+    /* Confirmation dialog */
+    dialog.confirm-dialog {
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      color: var(--text);
+      max-width: 440px;
+      width: 90vw;
+    }
+    dialog.confirm-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+    .confirm-body { padding: 16px 18px; }
+    .confirm-body h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+    .confirm-body p { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+    .confirm-body ul { font-size: 13px; color: var(--text-secondary); margin: 6px 0 8px 18px; }
+    .confirm-body li { margin: 3px 0; }
+    .confirm-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+    .btn-danger { background: var(--accent); color: white; border: none; }
+    .btn-danger:hover { opacity: 0.9; }
+    #refresh-status { font-size: 12px; }
+    .auto-refresh { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+  </style>
+</head>
+<body>
+  <h1>AI Email Search Settings</h1>
+
+  <!-- Connection -->
+  <h2>Connection</h2>
+  <div class="field">
+    <label for="server-url">Server URL</label>
+    <input type="text" id="server-url" placeholder="http://localhost:8342">
+  </div>
+  <div class="field">
+    <label for="api-key">API Key (optional)</label>
+    <input type="password" id="api-key" placeholder="Leave empty if not configured">
+  </div>
+
+  <!-- Search preferences -->
+  <h2>Search Preferences</h2>
+  <div class="field">
+    <label for="limit">Results per search</label>
+    <input type="number" id="limit" min="1" max="100" value="10">
+  </div>
+  <div class="field">
+    <label>Open emails in</label>
+    <div class="radio-group">
+      <label><input type="radio" name="open-in" value="tab" checked> New tab</label>
+      <label><input type="radio" name="open-in" value="window"> New window</label>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" id="save-btn">Save</button>
+    <button class="btn-secondary" id="test-btn">Test Connection</button>
+  </div>
+
+  <!-- Server Status -->
+  <div class="status-section">
+    <h2>Server Status</h2>
+
+    <div id="health-section"></div>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-card-label">Total Emails</div>
+        <div class="status-card-value" id="total-emails">—</div>
+      </div>
+      <div class="status-card">
+        <div class="status-card-label">Accounts</div>
+        <div class="status-card-value" id="total-accounts">—</div>
+      </div>
+    </div>
+
+    <!-- Indexer Status -->
+    <h2>Indexer</h2>
+    <div id="indexer-section"></div>
+
+    <!-- Accounts -->
+    <h2>Accounts</h2>
+    <div class="reindex-all-row">
+      <button class="btn-secondary" id="reindex-all-btn">Reindex All</button>
+      <span class="info-anchor">
+        <button type="button" class="btn-info" id="reindex-info-btn" aria-label="What does Reindex do?" title="What does Reindex do?">i</button>
+        <div class="info-popover" id="reindex-info-popover" role="dialog">
+          <h4>What does Reindex do?</h4>
+          <p>Triggers an immediate indexing cycle outside the normal schedule. It does <strong>not</strong> wipe and rebuild the index from scratch.</p>
+          <ul>
+            <li>Fetches new emails since the last cycle and adds them to the index.</li>
+            <li>Runs the cleanup pass that removes stale entries for emails no longer present on the server.</li>
+            <li>Counts against your IMAP provider's rate limits — large mailboxes (Gmail in particular) can be throttled and produce a partial cycle.</li>
+            <li>Bypasses any active per-account pause.</li>
+            <li>Cannot start while another cycle is in progress (the server returns 409).</li>
+          </ul>
+        </div>
+      </span>
+      <button class="btn-secondary" id="refresh-status">Refresh</button>
+    </div>
+    <div id="reindex-feedback" class="reindex-feedback hidden"></div>
+    <div id="accounts-section"></div>
+  </div>
+
+  <dialog class="confirm-dialog" id="confirm-dialog">
+    <div class="confirm-body">
+      <h3 id="confirm-title">Confirm</h3>
+      <div id="confirm-message"></div>
+    </div>
+    <div class="confirm-actions">
+      <button type="button" class="btn-secondary" id="confirm-cancel">Cancel</button>
+      <button type="button" class="btn-danger" id="confirm-ok">Confirm</button>
+    </div>
+  </dialog>
+
+  <script src="options.js"></script>
+</body>
+</html>

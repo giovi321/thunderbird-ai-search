@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" width="1000" height="460">
+  <defs>
+    <pattern id="dots2" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.9" fill="rgba(28,25,23,0.10)"/>
+    </pattern>
+    <marker id="arrow2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#57534e"/>
+    </marker>
+    <marker id="arrow2-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8E4449"/>
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#efeee5"/>
+  <rect width="100%" height="100%" fill="url(#dots2)" opacity="0.55"/>
+
+  <rect x="200" y="116" width="752" height="128" rx="8"
+        fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+        stroke-dasharray="4,4"/>
+  <rect x="220" y="108" width="120" height="16" fill="#efeee5"/>
+  <text x="228" y="120" fill="#78716c" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        letter-spacing="0.14em">PER FOLDER · LOOP</text>
+
+  <line x1="168" y1="180" x2="216" y2="180" stroke="#57534e" stroke-width="1.2"
+        marker-end="url(#arrow2)"/>
+  <line x1="360" y1="180" x2="408" y2="180" stroke="#57534e" stroke-width="1.2"
+        marker-end="url(#arrow2)"/>
+  <line x1="552" y1="180" x2="600" y2="180" stroke="#8E4449" stroke-width="1.4"
+        marker-end="url(#arrow2-accent)"/>
+  <line x1="744" y1="180" x2="792" y2="180" stroke="#8E4449" stroke-width="1.4"
+        marker-end="url(#arrow2-accent)"/>
+
+  <line x1="864" y1="220" x2="864" y2="320" stroke="#57534e" stroke-width="1.2"
+        stroke-dasharray="5,4" marker-end="url(#arrow2)"/>
+  <rect x="828" y="262" width="80" height="14" rx="2" fill="#efeee5"/>
+  <text x="868" y="272" fill="#57534e" font-size="8"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.06em">AFTER LOOP</text>
+
+  <rect x="24" y="140" width="144" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="24" y="140" width="144" height="80" rx="6"
+        fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <rect x="32" y="148" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="48" y="157" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">1</text>
+  <text x="96" y="184" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">STATUS pre-pass</text>
+  <text x="96" y="202" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">UIDVALIDITY · UIDNEXT</text>
+
+  <rect x="216" y="140" width="144" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="216" y="140" width="144" height="80" rx="6"
+        fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <rect x="224" y="148" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="240" y="157" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">2</text>
+  <text x="288" y="184" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Fetch new UIDs</text>
+  <text x="288" y="202" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">UID SEARCH · UID FETCH</text>
+
+  <rect x="408" y="140" width="144" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="408" y="140" width="144" height="80" rx="6"
+        fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <rect x="416" y="148" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="432" y="157" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">3</text>
+  <text x="480" y="184" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Filter duplicates</text>
+  <text x="480" y="202" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">skip seen Message-IDs</text>
+
+  <rect x="600" y="140" width="144" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="600" y="140" width="144" height="80" rx="6"
+        fill="rgba(142,68,73,0.10)" stroke="#8E4449" stroke-width="1"/>
+  <rect x="608" y="148" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(142,68,73,0.55)" stroke-width="0.8"/>
+  <text x="624" y="157" fill="#8E4449" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">4</text>
+  <text x="672" y="184" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Embed batch</text>
+  <text x="672" y="202" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">Ollama · 768d vector</text>
+
+  <rect x="792" y="140" width="144" height="80" rx="6" fill="#faf7f2"/>
+  <rect x="792" y="140" width="144" height="80" rx="6"
+        fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <rect x="800" y="148" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="816" y="157" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">5</text>
+  <text x="864" y="184" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Upsert + checkpoint</text>
+  <text x="864" y="202" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">Qdrant · save last_uid</text>
+
+  <rect x="744" y="320" width="240" height="64" rx="6" fill="#faf7f2"/>
+  <rect x="744" y="320" width="240" height="64" rx="6"
+        fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+        stroke-dasharray="4,3"/>
+  <rect x="752" y="328" width="60" height="12" rx="2"
+        fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+  <text x="782" y="337" fill="rgba(28,25,23,0.75)" font-size="7"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle" letter-spacing="0.10em">OPT</text>
+  <text x="864" y="358" fill="#1c1917" font-size="13" font-weight="600"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Cleanup deleted</text>
+  <text x="864" y="374" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        text-anchor="middle">if ≥ cleanup_interval_hours</text>
+
+  <text x="24" y="332" fill="#1c1917" font-size="14"
+        font-family="Georgia, 'Times New Roman', serif" font-style="italic">
+    Each batch persists last_uid before moving on.
+  </text>
+  <text x="24" y="350" fill="#1c1917" font-size="14"
+        font-family="Georgia, 'Times New Roman', serif" font-style="italic">
+    An abort mid-folder loses one batch, never the run.
+  </text>
+
+  <line x1="24" y1="408" x2="976" y2="408"
+        stroke="rgba(28,25,23,0.10)" stroke-width="0.8"/>
+  <text x="24" y="424" fill="#57534e" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <rect x="100" y="416" width="14" height="10" rx="2"
+        fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="120" y="425" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">step</text>
+
+  <rect x="172" y="416" width="14" height="10" rx="2"
+        fill="rgba(142,68,73,0.10)" stroke="#8E4449" stroke-width="1"/>
+  <text x="192" y="425" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">focal</text>
+
+  <rect x="244" y="416" width="14" height="10" rx="2"
+        fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+        stroke-dasharray="3,2"/>
+  <text x="264" y="425" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">optional / boundary</text>
+
+  <line x1="408" y1="421" x2="436" y2="421" stroke="#8E4449" stroke-width="1.4"
+        marker-end="url(#arrow2-accent)"/>
+  <text x="444" y="425" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">happy path</text>
+
+  <line x1="556" y1="421" x2="584" y2="421" stroke="#57534e" stroke-width="1.2"
+        stroke-dasharray="5,4" marker-end="url(#arrow2)"/>
+  <text x="592" y="425" fill="#1c1917" font-size="9"
+        font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">conditional / async</text>
+</svg>

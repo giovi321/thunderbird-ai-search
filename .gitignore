@@ -1,0 +1,16 @@
+config.yaml
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+node_modules/
+*.xpi
+qdrant_data/
+state.json
+.claude/
+CLAUDE.md

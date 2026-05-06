@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thunderbird AI Search — architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf7f2;
+    --paper-2: #f2ede4;
+    --ink: #1c1917;
+    --muted: #57534e;
+    --soft: #78716c;
+    --rule: rgba(28,25,23,0.12);
+    --accent: #8E4449;
+    --accent-tint: rgba(142,68,73,0.10);
+    --link: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Geist', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+  }
+  .eyebrow {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 32px;
+  }
+  .frame {
+    background: #efeee5;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .frame svg { display: block; margin: 0 auto; }
+  footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--soft);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">DIAGRAM · ARCHITECTURE</p>
+  <h1>Thunderbird AI Search — system overview</h1>
+  <p class="subtitle">Local indexer pulls mail over IMAP, embeds it through Ollama, stores vectors in Qdrant. The Thunderbird addon hits the same FastAPI server for search.</p>
+
+  <div class="frame">
+    <svg viewBox="0 0 800 560" width="800" height="560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.9" fill="rgba(28,25,23,0.10)"/>
+        </pattern>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#57534e"/>
+        </marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#8E4449"/>
+        </marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#2563eb"/>
+        </marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#efeee5"/>
+      <rect width="100%" height="100%" fill="url(#dots)" opacity="0.55"/>
+
+      <!-- Docker boundary -->
+      <rect x="288" y="208" width="488" height="240" rx="8"
+            fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+            stroke-dasharray="4,4"/>
+      <rect x="312" y="200" width="60" height="16" fill="#efeee5"/>
+      <text x="320" y="212" fill="#78716c" font-size="8"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            letter-spacing="0.14em">DOCKER</text>
+
+      <!-- Arrows (drawn first so boxes sit on top) -->
+      <!-- IMAP -> Server -->
+      <line x1="400" y1="136" x2="400" y2="240"
+            stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="412" y="170" width="64" height="14" rx="2" fill="#efeee5"/>
+      <text x="444" y="180" fill="#57534e" font-size="8"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.06em">IMAP FETCH</text>
+
+      <!-- Addon -> Server (accent: primary search flow) -->
+      <line x1="208" y1="280" x2="320" y2="280"
+            stroke="#8E4449" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <rect x="232" y="262" width="64" height="14" rx="2" fill="#efeee5"/>
+      <text x="264" y="272" fill="#8E4449" font-size="8"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.06em">/SEARCH</text>
+
+      <!-- Server -> Qdrant -->
+      <line x1="480" y1="280" x2="600" y2="280"
+            stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="510" y="262" width="80" height="14" rx="2" fill="#efeee5"/>
+      <text x="550" y="272" fill="#57534e" font-size="8"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.06em">UPSERT/QUERY</text>
+
+      <!-- Server -> Ollama -->
+      <line x1="400" y1="320" x2="400" y2="400"
+            stroke="#57534e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="412" y="350" width="44" height="14" rx="2" fill="#efeee5"/>
+      <text x="434" y="360" fill="#57534e" font-size="8"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.06em">EMBED</text>
+
+      <!-- Node: IMAP Mail Servers (external) -->
+      <rect x="320" y="64" width="160" height="72" rx="6" fill="#faf7f2"/>
+      <rect x="320" y="64" width="160" height="72" rx="6"
+            fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+      <rect x="328" y="72" width="36" height="12" rx="2"
+            fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+      <text x="346" y="81" fill="rgba(28,25,23,0.75)" font-size="7"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.10em">EXT</text>
+      <text x="400" y="106" fill="#1c1917" font-size="12" font-weight="600"
+            font-family="'Geist', system-ui, sans-serif" text-anchor="middle">IMAP Mail Servers</text>
+      <text x="400" y="122" fill="#57534e" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle">Gmail · Fastmail · …</text>
+
+      <!-- Node: Thunderbird Addon (input) -->
+      <rect x="48" y="240" width="160" height="80" rx="6" fill="#faf7f2"/>
+      <rect x="48" y="240" width="160" height="80" rx="6"
+            fill="rgba(87,83,78,0.10)" stroke="#78716c" stroke-width="1"/>
+      <rect x="56" y="248" width="32" height="12" rx="2"
+            fill="transparent" stroke="rgba(120,113,108,0.55)" stroke-width="0.8"/>
+      <text x="72" y="257" fill="#57534e" font-size="7"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.10em">UI</text>
+      <text x="128" y="284" fill="#1c1917" font-size="12" font-weight="600"
+            font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Thunderbird Addon</text>
+      <text x="128" y="302" fill="#57534e" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle">WebExtension · MV2</text>
+
+      <!-- Node: FastAPI Server (FOCAL) -->
+      <rect x="320" y="240" width="160" height="80" rx="6" fill="#faf7f2"/>
+      <rect x="320" y="240" width="160" height="80" rx="6"
+            fill="rgba(142,68,73,0.10)" stroke="#8E4449" stroke-width="1"/>
+      <rect x="328" y="248" width="36" height="12" rx="2"
+            fill="transparent" stroke="rgba(142,68,73,0.55)" stroke-width="0.8"/>
+      <text x="346" y="257" fill="#8E4449" font-size="7"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.10em">API</text>
+      <text x="400" y="284" fill="#1c1917" font-size="12" font-weight="600"
+            font-family="'Geist', system-ui, sans-serif" text-anchor="middle">FastAPI Server</text>
+      <text x="400" y="302" fill="#57534e" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle">search + indexer · :8342</text>
+
+      <!-- Node: Qdrant (store) -->
+      <rect x="600" y="240" width="160" height="80" rx="6" fill="#faf7f2"/>
+      <rect x="600" y="240" width="160" height="80" rx="6"
+            fill="rgba(28,25,23,0.05)" stroke="#57534e" stroke-width="1"/>
+      <rect x="608" y="248" width="32" height="12" rx="2"
+            fill="transparent" stroke="rgba(87,83,78,0.55)" stroke-width="0.8"/>
+      <text x="624" y="257" fill="#57534e" font-size="7"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.10em">DB</text>
+      <text x="680" y="284" fill="#1c1917" font-size="12" font-weight="600"
+            font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Qdrant</text>
+      <text x="680" y="302" fill="#57534e" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle">vector store · :6333</text>
+
+      <!-- Node: Ollama (external) -->
+      <rect x="320" y="400" width="160" height="72" rx="6" fill="#faf7f2"/>
+      <rect x="320" y="400" width="160" height="72" rx="6"
+            fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+      <rect x="328" y="408" width="32" height="12" rx="2"
+            fill="transparent" stroke="rgba(28,25,23,0.40)" stroke-width="0.8"/>
+      <text x="344" y="417" fill="rgba(28,25,23,0.75)" font-size="7"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle" letter-spacing="0.10em">AI</text>
+      <text x="400" y="442" fill="#1c1917" font-size="12" font-weight="600"
+            font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Ollama</text>
+      <text x="400" y="458" fill="#57534e" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            text-anchor="middle">nomic-embed-text · :11434</text>
+
+      <!-- Legend -->
+      <line x1="48" y1="500" x2="752" y2="500"
+            stroke="rgba(28,25,23,0.10)" stroke-width="0.8"/>
+      <text x="48" y="516" fill="#57534e" font-size="8"
+            font-family="'Geist Mono', ui-monospace, monospace"
+            letter-spacing="0.14em">LEGEND</text>
+
+      <!-- Legend item: focal -->
+      <rect x="120" y="508" width="14" height="10" rx="2"
+            fill="rgba(142,68,73,0.10)" stroke="#8E4449" stroke-width="1"/>
+      <text x="140" y="517" fill="#1c1917" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace">focal</text>
+
+      <!-- Legend item: input -->
+      <rect x="200" y="508" width="14" height="10" rx="2"
+            fill="rgba(87,83,78,0.10)" stroke="#78716c" stroke-width="1"/>
+      <text x="220" y="517" fill="#1c1917" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace">input</text>
+
+      <!-- Legend item: store -->
+      <rect x="280" y="508" width="14" height="10" rx="2"
+            fill="rgba(28,25,23,0.05)" stroke="#57534e" stroke-width="1"/>
+      <text x="300" y="517" fill="#1c1917" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace">store</text>
+
+      <!-- Legend item: external -->
+      <rect x="360" y="508" width="14" height="10" rx="2"
+            fill="rgba(28,25,23,0.03)" stroke="rgba(28,25,23,0.30)" stroke-width="1"/>
+      <text x="380" y="517" fill="#1c1917" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace">external</text>
+
+      <!-- Legend item: docker boundary -->
+      <rect x="448" y="508" width="14" height="10" rx="2"
+            fill="rgba(28,25,23,0.02)" stroke="rgba(28,25,23,0.30)" stroke-width="1"
+            stroke-dasharray="3,2"/>
+      <text x="468" y="517" fill="#1c1917" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace">trust boundary</text>
+
+      <!-- Legend item: accent arrow -->
+      <line x1="580" y1="513" x2="608" y2="513" stroke="#8E4449" stroke-width="1.4"
+            marker-end="url(#arrow-accent)"/>
+      <text x="616" y="517" fill="#1c1917" font-size="9"
+            font-family="'Geist Mono', ui-monospace, monospace">primary flow</text>
+    </svg>
+  </div>
+
+  <footer>
+    Single-host deployment · Ollama runs on the Docker host, reached via host.docker.internal · Qdrant vectors and indexer state live in named Docker volumes.
+  </footer>
+</main>
+</body>
+</html>

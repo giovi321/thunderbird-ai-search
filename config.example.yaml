@@ -1,0 +1,76 @@
+# Thunderbird AI Search — Configuration
+# Copy this file to config.yaml and edit to match your setup.
+#
+# Passwords can also be set via environment variables in docker-compose.yml:
+#   TAIS_ACCOUNTS_0_PASSWORD=mysecret
+#   TAIS_ACCOUNTS_1_PASSWORD=anothersecret
+
+# ──────────────────────────────────────────────
+# IMAP accounts to index
+# ──────────────────────────────────────────────
+# All accounts share a single vector database.
+# Add as many accounts as you need.
+accounts:
+  - name: "work"                     # label shown in search results and addon
+    host: "imap.example.com"         # IMAP server hostname
+    port: 993                        # IMAP port (993 for SSL)
+    username: "user@example.com"
+    password: ""                     # set here or via TAIS_ACCOUNTS_0_PASSWORD
+    use_ssl: true
+    folders:                         # folders to index; empty [] = all folders
+      - "INBOX"
+      - "Sent"
+      - "Archive"
+
+  # Example: add a second account
+  # - name: "personal"
+  #   host: "imap.gmail.com"
+  #   port: 993
+  #   username: "me@gmail.com"
+  #   password: ""                   # or TAIS_ACCOUNTS_1_PASSWORD
+  #   use_ssl: true
+  #   folders: []                    # [] = index all folders
+
+# ──────────────────────────────────────────────
+# Ollama (embedding server)
+# ──────────────────────────────────────────────
+# Ollama must be running on the Docker host.
+# The docker-compose.yml automatically overrides the URL for container networking.
+ollama:
+  base_url: "http://localhost:11434" # overridden to host.docker.internal in Docker
+  model: "nomic-embed-text"          # 768-dimensional embeddings
+
+# ──────────────────────────────────────────────
+# Qdrant (vector database)
+# ──────────────────────────────────────────────
+# Runs as a Docker service alongside the server. No changes needed.
+qdrant:
+  url: "http://localhost:6333"       # overridden to http://qdrant:6333 in Docker
+  collection: "emails"
+
+# ──────────────────────────────────────────────
+# API settings
+# ──────────────────────────────────────────────
+api:
+  host: "0.0.0.0"                    # overridden in Docker; leave as-is
+  port: 8342
+  api_key: ""                        # if set, all requests require X-API-Key header
+                                     # generate one with: openssl rand -hex 32
+
+# ──────────────────────────────────────────────
+# Indexer settings
+# ──────────────────────────────────────────────
+indexer:
+  batch_size: 50                     # emails per embedding batch
+  max_body_chars: 4000               # truncate email body before embedding
+  schedule_minutes: 15               # re-index interval (0 = index once then stop)
+  cleanup_enabled: true              # remove Qdrant entries for deleted emails
+  # IMAP rate-limiting — tune these for strict providers like Gmail.
+  # Higher values = faster but more likely to hit rate limits.
+  # Lower values = slower but safer for Gmail.
+  imap_fetch_batch: 25               # emails per IMAP FETCH command (1 = no batching)
+  imap_folder_delay: 2.0             # seconds to wait between folders
+  imap_batch_delay: 0.5              # seconds to wait between fetch batches
+
+# Logging: DEBUG, INFO, WARNING, ERROR
+log_level: "INFO"

@@ -1,0 +1,70 @@
+---
+title: Thunderbird AI Search
+description: Semantic email search for Thunderbird — local, private, no cloud.
+template: splash
+hero:
+  tagline: Search your inbox by meaning, not keywords. Everything runs on your machine.
+  actions:
+    - text: Get started
+      link: /thunderbird-ai-search/getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/giovi321/thunderbird-ai-search
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What it does
+
+A local server pulls your mail over IMAP, embeds each message with a local AI model through Ollama, and stores the vectors in Qdrant. The Thunderbird addon sends your natural-language queries to that same server and opens matching messages directly in Thunderbird.
+
+No cloud APIs. No data sent anywhere. Your email stays on your machine.
+
+![Architecture diagram](/thunderbird-ai-search/assets/architecture.svg)
+
+## Quick start
+
+```bash
+# 1. Pull the embedding model
+ollama pull nomic-embed-text
+
+# 2. Clone and configure
+git clone https://github.com/giovi321/thunderbird-ai-search.git
+cd thunderbird-ai-search
+cp config.example.yaml config.yaml
+# edit config.yaml — add your IMAP account details
+
+# 3. Start
+docker compose up -d
+```
+
+Then install the Thunderbird addon and click the search icon.
+
+## How it fits together
+
+<CardGrid>
+  <Card title="Search API" icon="magnifier">
+    Takes a natural-language query from the addon, asks Ollama to embed it, and returns the closest vectors from Qdrant.
+  </Card>
+  <Card title="Indexer" icon="list-format">
+    Connects to your IMAP servers, downloads new mail, generates embedding vectors, and writes them to Qdrant. Runs every 15 minutes by default.
+  </Card>
+  <Card title="Thunderbird Addon" icon="puzzle">
+    A WebExtension (MV2) that adds a search tab to Thunderbird. Click any result to open the email directly.
+  </Card>
+  <Card title="All local" icon="laptop">
+    Qdrant and the server run in Docker. Ollama runs on your host. Nothing leaves your machine.
+  </Card>
+</CardGrid>
+
+## Tech stack
+
+| Component | Technology |
+|-----------|------------|
+| Server | Python + FastAPI |
+| Vector store | Qdrant |
+| Embeddings | Ollama (`nomic-embed-text`, 768d) |
+| Addon | Thunderbird WebExtension MV2 |
+| Deployment | Docker Compose |
