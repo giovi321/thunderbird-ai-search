@@ -2,7 +2,7 @@
 
 let pollInterval = null;
 
-const SHORTCUT_COMMAND_NAME = "open-search";
+const SHORTCUT_COMMAND_NAME = "_execute_browser_action";
 const SHORTCUT_DEFAULT = "Ctrl+Alt+S";
 
 async function loadSettings() {

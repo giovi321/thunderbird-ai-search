@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "AI Email Search",
   "description": "Semantic search over your email using local AI",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "author": "Giovanni Crapelli",
   "browser_specific_settings": {
     "gecko": {
@@ -18,17 +18,18 @@
   ],
   "browser_action": {
     "default_title": "AI Email Search",
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/search-16.svg",
       "32": "icons/search-32.svg"
     }
   },
   "commands": {
-    "open-search": {
+    "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Alt+S"
       },
-      "description": "Open AI Email Search in a new tab"
+      "description": "Open AI Email Search"
     }
   },
   "background": {

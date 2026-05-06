@@ -325,4 +325,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial load
   loadVersion();
   loadAccounts();
+
+  // If opened from the popup with ?q=..., pre-fill and run the search.
+  const params = new URLSearchParams(window.location.search);
+  const initialQuery = params.get("q");
+  if (initialQuery) {
+    const input = document.getElementById("search-input");
+    input.value = initialQuery;
+    doSearch();
+  }
 });

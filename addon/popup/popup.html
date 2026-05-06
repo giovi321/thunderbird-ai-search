@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Email Search</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <form id="search-form">
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Search your emails..."
+      autocomplete="off"
+      autofocus
+    >
+    <button type="submit" id="search-btn">Search</button>
+  </form>
+  <div class="hint">
+    <span>Press <kbd>Enter</kbd> to open results in a new tab</span>
+    <a href="#" id="open-full" title="Open full search page">Full search</a>
+  </div>
+</body>
+<script src="popup.js"></script>
+</html>
