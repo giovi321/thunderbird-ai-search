@@ -92,3 +92,11 @@ body {
 }
 
 .hint a:hover { text-decoration: underline; }
+
+.hint-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hint-links .sep { color: var(--text-muted); }

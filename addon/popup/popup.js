@@ -28,4 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     openSearch(input.value.trim());
   });
+
+  document.getElementById("open-settings").addEventListener("click", (e) => {
+    e.preventDefault();
+    messenger.runtime.openOptionsPage();
+    window.close();
+  });
 });
